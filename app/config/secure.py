@@ -1,0 +1,3 @@
+DEBUG = True
+SQLALCHEMY_DATABASE_URI = "mysql+cymysql://root:abc12345@192.168.9.55:3306/ginger"
+SECRET_KEY = 'LH4+72EXYhAsyxJle1NVDRWLIFxs0OIF3ZTwCzOplv5lsWoF=/='
