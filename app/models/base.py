@@ -6,6 +6,9 @@ from flask_sqlalchemy import SQLAlchemy as _SQLAlchemy, BaseQuery
 from sqlalchemy import Column, Integer, SmallInteger
 from contextlib import  contextmanager
 
+from app.libs.error_code import NotFoundException
+
+
 class SQLAlchemy(_SQLAlchemy):
   @contextmanager
   def auto_commit(self):
@@ -22,6 +25,18 @@ class Query(BaseQuery):
       kwargs['status'] = 1
     return super(Query, self).filter_by(**kwargs)
 
+  def get_or_404(self, ident):
+    rv = self.get(ident)
+    if not rv:
+      raise NotFoundException()
+    return rv
+
+  def first_or_404(self):
+    rv = self.fisrt()
+    if not rv:
+      raise NotFoundException()
+    return rv
+
 db = SQLAlchemy(query_class=Query)
 
 class Base(db.Model):
@@ -31,6 +46,10 @@ class Base(db.Model):
 
   def __init__(self):
     self.create_time = int(datetime.now().timestamp())
+
+  #字典序列化 模型字典 key value时候 keys() 返回值时使用
+  def __getitem__(self, item):
+    return getattr(self, item)
 
   @property
   def create_datetime(self):

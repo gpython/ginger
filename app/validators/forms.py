@@ -1,9 +1,10 @@
 #encoding:utf-8
-from wtforms import Form, StringField, IntegerField, ValidationError
+from wtforms import StringField, IntegerField, ValidationError
 from wtforms.validators import DataRequired, length, Email, Regexp
 
 from app.libs.enums import ClientTypeEnum
 from app.models.user import User
+from app.validators.base import BaseForm as Form
 
 
 class ClientForm(Form):
@@ -22,15 +23,17 @@ class ClientForm(Form):
       print('client = ', client)
     except ValueError as e:
       raise e
+
     #validate表单校验通过后 更改表单type的值
     self.type.data = client
+
     print('self.type = ', self.type, 'self.type.data = ', self.type.data)
 
     pass
 
 class UserEmailForm(ClientForm):
   account = StringField(validators=[Email(message='invalidate email')])
-  secret = StringField(validators=[DataRequired(), Regexp(r'^[A-Za-z0-9_~!@#$%^&*()+`<>/\|]{6,22}$')])
+  secret = StringField(validators=[DataRequired(), Regexp(r'^[A-Za-z0-9_~!@#$%^&*()<>]{6,22}$')])
   nickname = StringField(validators=[DataRequired(), length(min=2, max=22)])
 
   #表单校验 form.validate()校验时 立即执行此函数  校验相关字段
