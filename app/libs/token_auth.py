@@ -1,11 +1,12 @@
 #encoding:utf-8
 from collections import namedtuple
 
-from flask import current_app, g
+from flask import current_app, g, request
 from flask_httpauth import HTTPBasicAuth
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired
 
-from app.libs.error_code import AuthException
+from app.libs.error_code import AuthException, Forbidden
+from app.libs.scope import is_in_scope
 
 auth = HTTPBasicAuth()
 User = namedtuple('User', ['uid', 'ac_type', 'scope'])
@@ -39,4 +40,9 @@ def verify_auth_token(token):
                         error_code = 1003)
   uid = data['uid']
   ac_type = data['type']
-  return User(uid, ac_type, '')
+  scope = data['scope']
+  #密钥 request 可以访问的视图函数 request中包含要请求的视图函数
+  allow = is_in_scope(scope, request.endpoint)
+  if not allow:
+    raise Forbidden()
+  return User(uid, ac_type, scope)

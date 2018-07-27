@@ -1,7 +1,7 @@
-request.json  => 以json形式发送过来的数据
-request.method =>请求方法(GET POST)
-request.full_path =>请求的完整路径 包括?后边参数
-
+request.json        =>以json形式发送过来的数据
+request.method      =>请求方法(GET POST)
+request.full_path   =>请求的完整路径 包括?后边参数
+request.endpoint    =>当前请求 要访问的视图函数
 
 
 HTTPBasasicAuth
@@ -33,3 +33,17 @@ key = Authorization
 value = basic base64(username:password)
 
 类变量 不会存储到__dict__中
+
+
+请求token中 包含不同用户对用的不同权限类  不同权限类中包含各种可以请求访问的视图函数
+request.endpoint 获得到用户请求的视图函数
+
+                SuperScope  {View_A View_B View_C ..}
+
+token           AdminScope  {View_A View_B ..}
+
+                UserScope   {View_A ..}
+
+globals() 当前模块下所有变量 包括当前的所有类都变成一个字典
+key 为 字符串形式 value 为对象类型
+

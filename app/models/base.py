@@ -32,7 +32,7 @@ class Query(BaseQuery):
     return rv
 
   def first_or_404(self):
-    rv = self.fisrt()
+    rv = self.first()
     if not rv:
       raise NotFoundException()
     return rv
